@@ -6,7 +6,7 @@ const Food = new Scheme({
     name: {type: String, maxLength: 255},
     foodType: {type: String},
     price:{type: Number},
-    image: {type: String}
+    image: {type: String},
 },{
     timestamps: true
 })
