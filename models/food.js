@@ -4,7 +4,7 @@ const Scheme = mongoose.Schema;
 const Food = new Scheme({
     name: {type: String, maxLength: 255},
     price:{type: Number},
-    image: {type: String}
+    image: {type: String},
 },{
     timestamps: true
 })

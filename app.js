@@ -6,6 +6,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api')
+var thienApi = require('./routes/apiT')
 
 const database = require('./config/db');
 var app = express();
@@ -22,7 +23,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Routers
 app.use('/', indexRouter);
-app.use('/api',apiRouter)
+app.use('/api',apiRouter);
+app.use('/apiT', thienApi)
 database.connect();
 
 
