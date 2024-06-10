@@ -57,32 +57,34 @@ router.put('/update-foodtype/:id', Upload.single('image'), async (req, res) => {
         const updateFoodType = await FoodType.findById(id)
 
         if (file && file.length > 0) {
-           urlImg = `${req.protocol}://${req.get("host")}/uploads/${file.filename}`;
-        }
-
-        if (urlImg == null) {
+            urlImg = `${req.protocol}://${req.get("host")}/uploads/${file.filename}`;
+        } else {
             urlImg = updateFoodType.image;
         }
-
-        let result = null;
         if (updateFoodType) {
-            updateFoodType.name = data.name ?? updateFoodType.name,
-            updateFoodType.image = urlImg
-            result = await updateFoodType.save()
-        }
+            updateFoodType.name = data.name ?? updateFoodType.name;
+            updateFoodType.image = urlImg;
+            const result = await updateFoodType.save();
 
-        if (result) {
-            res.json({
-                'status': 200,
-                'messenger': 'Cập nhật thành công',
-                'data': result
-            })
+            if (result) {
+                res.json({
+                    status: 200,
+                    messenger: 'Cập nhật thành công',
+                    data: result
+                });
+            } else {
+                res.json({
+                    status: 400,
+                    messenger: 'Cập nhật không thành công',
+                    data: []
+                });
+            }
         } else {
-            res.json({
-                'status': 400,
-                'messenger': 'Cập nhật không thành công',
-                'data': []
-            })
+            res.status(404).json({
+                status: 404,
+                messenger: 'Không tìm thấy loại món ăn để cập nhật',
+                data: []
+            });
         }
     } catch (error) {
         console.log(error);
@@ -144,7 +146,7 @@ router.get('/get-foodtype-details/:id', async (req, res) => {
     try {
         const { id } = req.params
         const data = await FoodType.findById(id);
-        console.log(`Found : ${JSON.stringify(data)}`);
+        // console.log(`Found : ${JSON.stringify(data)}`);
         res.status(200).send(data)
     } catch (error) {
         console.log(error);
@@ -163,7 +165,9 @@ router.post('/add-food', Upload.single('image'), async (req, res) => {
         }
         const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${file.filename}`;
         const newFood = new Food({
+            category: data.category,
             name: data.name,
+            foodType: data.foodType,
             price: data.price,
             image: imageUrl,
         });
@@ -201,34 +205,40 @@ router.put('/update-food/:id', Upload.single('image'), async (req, res) => {
         const updateFood = await Food.findById(id)
 
         if (file && file.length > 0) {
-           urlImg = `${req.protocol}://${req.get("host")}/uploads/${file.filename}`;
-        }
-
-        if (urlImg == null) {
+            urlImg = `${req.protocol}://${req.get("host")}/uploads/${file.filename}`;
+        } else {
             urlImg = updateFood.image;
         }
 
-        let result = null;
         if (updateFood) {
+            updateFood.category = data.category ?? updateFood.category,
+            updateFood.foodType = data.foodType ?? updateFood.foodType,
             updateFood.name = data.name ?? updateFood.name,
             updateFood.price = data.price ?? updateFood.price
             updateFood.image = urlImg
-            result = await updateFood.save()
-        }
+            const result = await updateFood.save()
 
-        if (result) {
-            res.json({
-                'status': 200,
-                'messenger': 'Cập nhật thành công',
-                'data': result
-            })
-        } else {
-            res.json({
-                'status': 400,
-                'messenger': 'Cập nhật không thành công',
-                'data': []
-            })
+            if (result) {
+                res.json({
+                    'status': 200,
+                    'messenger': 'Cập nhật thành công',
+                    'data': result
+                })
+            } else {
+                res.json({
+                    'status': 400,
+                    'messenger': 'Cập nhật không thành công',
+                    'data': []
+                })
+            }
+        }else {
+            res.status(404).json({
+                status: 404,
+                messenger: 'Không tìm thấy món ăn để cập nhật',
+                data: []
+            });
         }
+        
     } catch (error) {
         console.log(error);
         res.status(500).json({
